@@ -1,0 +1,94 @@
+body{
+    background-color: #e8e8e8;
+    text-align: center;
+}
+header div{
+    background-color: #66b3ff;
+    text-align: center;
+    width: 30%;
+    border-radius: 5%;
+    margin: auto;
+    color: black;
+    margin-bottom: 2%;
+}
+td{
+    border-bottom: 2px solid cyan;
+    text-align: left;
+    max-width: 20%;
+}
+th{
+    text-align: left;
+}
+a{
+    text-decoration: none;
+    color: black;
+}
+table{
+    margin-bottom: 5%;
+    margin: auto;
+    width: 50%;
+}
+.icono{
+    width: 40px;
+    opacity: 0.8;  
+    text-align: center;
+}
+.icono:hover{
+    opacity: 1;
+}
+footer{
+    background-color: #66b3ff;
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    text-align: center;
+}
+footer a{
+    color: black;
+}
+.script{
+    background-color: #66b3ff;
+    padding: 15px;
+    width: 3%;
+    font-weight: bold;
+}
+form{
+    display: inline-block;
+    margin-bottom: 4%;
+}
+.images{
+    text-align: center;
+}
+.nuevo{
+    width: 40px;
+    opacity: 0.8;  
+    text-align: center;
+    position: relative;
+    left: 2%;
+    bottom: 2%;
+}
+.nuevo:hover{
+    opacity: 1;
+}
+
+.importar, .exportar{
+    width: 7%;
+    border-radius: 9%;
+    padding-top: 0.8%;
+    padding-bottom: 0.8%;
+    background-color: #63c8f7;
+    text-align: center;
+    cursor: pointer;
+    position: fixed;
+    left: 1.5%;
+}
+.importar{
+    top: 14%;
+}
+.exportar{
+    top: 20%;
+}
+.importar:hover, .exportar:hover{
+    background-color: #66b3ff;
+}
