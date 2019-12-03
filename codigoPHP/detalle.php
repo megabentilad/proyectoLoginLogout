@@ -17,26 +17,31 @@
     </head>
     <body>
         <h1>
-            Variables globales
+            Detalles del programa
         </h1>
         <?php
             /**
              * @author Luis Mateo Rivera Uriarte
              * @since 29/11/2019
              */
-             foreach ($GLOBALS as $todo => $variable) {
-            if (is_array($variable)) {
-                if ($variable != $GLOBALS) {
-                    echo"<h2>" . $todo . "</h2><table>";
-                    foreach ($variable as $indice => $contenido) {
-                        echo'<tr><td>' . $indice . '</td><td>[' . "'" . $contenido . "']</td></tr>";
-                    }
-                    echo"</table><br/>";
-                }
-            } else {
-                echo $variable . "<br/>";
+            session_start();
+            if(!isset($_SESSION['usuarioDAW215AppLoginLogoff'])){
+                header("Location: login.php");
             }
-        }
+            foreach ($GLOBALS as $todo => $variable) {
+                if (is_array($variable)) {
+                    if ($variable != $GLOBALS) {
+                        echo"<h2>" . $todo . "</h2><table>";
+                        foreach ($variable as $indice => $contenido) {
+                            echo'<tr><td>' . $indice . '</td><td>[' . "'" . $contenido . "']</td></tr>";
+                        }
+                        echo"</table><br/>";
+                    }
+                } else {
+                    echo $variable . "<br/>";
+                }
+            
+            }
             phpinfo();
         ?>
         <footer>
@@ -44,8 +49,8 @@
                 <a href="../../../..">
                     © Luis Mateo Rivera Uriarte 2019-2020
                 </a>
-                <a href="http://daw-usgit.sauces.local/luism/proyectoTema5/tree/master" target="_blank">
-                    <img src="webroot/images/gitLab.png" class="iconoFooter">
+                <a href="http://daw-usgit.sauces.local/luism/proyectoLoginlogoff/tree/master" target="_blank">
+                    <img src="../webroot/images/gitLab.png" class="iconoFooter"  title="GitLab">
                 </a>
             </p>
         </footer>

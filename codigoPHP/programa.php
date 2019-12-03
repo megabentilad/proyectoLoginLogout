@@ -13,7 +13,7 @@
         <header>
             <div>
                 <h1>
-                    Inicio de sesión
+                    Cuerpo del programa
                 </h1>
             </div>
         </header>
@@ -22,12 +22,27 @@
           @author Luis Mateo Rivera Uriate
           @since 30/11/2019
          */
-        ?>
         
+            session_start();
+            if(isset($_GET['romper'])){
+                session_destroy();
+                header("Location: programa.php");
+            }
+            if(!isset($_SESSION['usuarioDAW215AppLoginLogoff'])){
+                header("Location: login.php");
+            }
+        ?>
+        <h3>Bienvenid@ <?php echo ucfirst($_SESSION['user']); ?>.</h3>
+        <br/>
+        <a href="detalle.php"><button>Ir al detalle</button></a>
+        <a href="programa.php?romper=true"><button>Cerrar sesión</button></a>
         <footer>
             <p>
                 <a href="../../..">
                     © Luis Mateo Rivera Uriarte 2019-2020
+                </a>
+                <a href="http://daw-usgit.sauces.local/luism/proyectoLoginlogoff/tree/master" target="_blank">
+                    <img src="../webroot/images/gitLab.png" class="iconoFooter"  title="GitLab">
                 </a>
             </p>
         </footer>
