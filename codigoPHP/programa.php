@@ -1,16 +1,17 @@
+<?php
+    //TODO ESTO ESTÄ AQUÍ CÓMO SUGERENCIA DE HERACLIO
+    session_start();
+    if (!isset($_SESSION['usuarioDAW215AppLoginLogoff'])) {
+        header("Location: login.php");
+    }
+    if(isset($_GET['cerrar'])){
+        session_destroy();
+        header("Location: login.php");
+    }
+?>
 <!DOCTYPE html>
 <html lang="es">
-    <?php
-                        //TODO ESTO ESTÄ AQUÍ CÓMO SUGERENCIA DE HERACLIO
-        session_start();
-        if (isset($_GET['cerrar'])) {
-            session_destroy();
-            header("Refresh:0");
-        }
-        if(!isset($_SESSION['usuarioDAW215AppLoginLogoff'])){
-                header("Location: login.php");
-            }
-    ?>
+
     <head>
         <title>Luis Mateo Rivera Uriarte</title>
         <meta charset="UTF-8">
@@ -34,6 +35,7 @@
           @since 30/11/2019
          */
         ?>
+
         <h3>Bienvenid@ <?php echo ucfirst($_SESSION['usuarioDAW215AppLoginLogoff']); ?>.</h3>
         <br/>
         <a href="detalle.php"><button>Ir al detalle</button></a>

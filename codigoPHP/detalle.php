@@ -1,12 +1,12 @@
+<?php
+    //TODO ESTO ESTÄ AQUÍ CÓMO SUGERENCIA DE HERACLIO
+    session_start();
+    if (!isset($_SESSION['usuarioDAW215AppLoginLogoff'])) {
+        header("Location: login.php");
+    }
+?>
 <!DOCTYPE html>
 <html lang="es">
-    <?php
-        //TODO ESTO ESTÄ AQUÍ CÓMO SUGERENCIA DE HERACLIO
-        session_start();
-        if (!isset($_SESSION['usuarioDAW215AppLoginLogoff'])) {
-            header("Location: login.php");
-        }
-    ?>
     <head>
         <title>Luis Mateo Rivera Uriarte</title>
         <meta charset="UTF-8">
