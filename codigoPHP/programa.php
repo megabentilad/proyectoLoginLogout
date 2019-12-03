@@ -1,5 +1,16 @@
 <!DOCTYPE html>
 <html lang="es">
+    <?php
+                        //TODO ESTO ESTÄ AQUÍ CÓMO SUGERENCIA DE HERACLIO
+        session_start();
+        if (isset($_GET['cerrar'])) {
+            session_destroy();
+            header("Refresh:0");
+        }
+        if(!isset($_SESSION['usuarioDAW215AppLoginLogoff'])){
+                header("Location: login.php");
+            }
+    ?>
     <head>
         <title>Luis Mateo Rivera Uriarte</title>
         <meta charset="UTF-8">
@@ -22,20 +33,11 @@
           @author Luis Mateo Rivera Uriate
           @since 30/11/2019
          */
-        
-            session_start();
-            if(isset($_GET['romper'])){
-                session_destroy();
-                header("Refresh:0");
-            }
-            if(!isset($_SESSION['usuarioDAW215AppLoginLogoff'])){
-                header("Location: login.php");
-            }
         ?>
         <h3>Bienvenid@ <?php echo ucfirst($_SESSION['usuarioDAW215AppLoginLogoff']); ?>.</h3>
         <br/>
         <a href="detalle.php"><button>Ir al detalle</button></a>
-        <a href="programa.php?romper=true"><button>Cerrar sesión</button></a>
+        <a href="programa.php?cerrar=true"><button>Cerrar sesión</button></a>
         <footer>
             <p>
                 <a href="../../..">

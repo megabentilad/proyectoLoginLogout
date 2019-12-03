@@ -1,5 +1,12 @@
 <!DOCTYPE html>
 <html lang="es">
+    <?php
+        //TODO ESTO ESTÄ AQUÍ CÓMO SUGERENCIA DE HERACLIO
+        session_start();
+        if (!isset($_SESSION['usuarioDAW215AppLoginLogoff'])) {
+            header("Location: login.php");
+        }
+    ?>
     <head>
         <title>Luis Mateo Rivera Uriarte</title>
         <meta charset="UTF-8">
@@ -62,10 +69,6 @@
           @author Luis Mateo Rivera Uriate
           @since 30/11/2019
          */
-        session_start();
-        if(isset($_SESSION['usuarioDAW215AppLoginLogoff'])){
-            header("Location: programa.php");
-        }
         require '../core/validacionFormularios.php'; //Importamos la libreria de validacion
         include '../config/conexionBDClase.php'; //Importo los datos de conexión
         $fallos = 0; //Contador de fallos al poner la contraseña
@@ -103,7 +106,7 @@
                         $aErrores['name'] = "El usuario no existe.";
                         $fallos = 0;
                     }else{
-                        if($resultado->fetchObject()->Password !== hash('sha256', $password)){
+                        if($resultado->fetchObject()->Password !== hash('sha256', $codUsuario . $password)){
                             $aErrores['pass'] = "La contraseña es incorrecta.";
                             $fallos++;
                             if($fallos >= 3){

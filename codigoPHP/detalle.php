@@ -1,5 +1,12 @@
 <!DOCTYPE html>
 <html lang="es">
+    <?php
+        //TODO ESTO ESTÄ AQUÍ CÓMO SUGERENCIA DE HERACLIO
+        session_start();
+        if (!isset($_SESSION['usuarioDAW215AppLoginLogoff'])) {
+            header("Location: login.php");
+        }
+    ?>
     <head>
         <title>Luis Mateo Rivera Uriarte</title>
         <meta charset="UTF-8">
@@ -13,6 +20,13 @@
             tr{
                 background-color: #ddd; 
             }
+            .volver{
+                position: absolute;
+                top: 20px;
+            }
+            .icono{
+                width: 80px;
+            }
         </style>
     </head>
     <body>
@@ -24,10 +38,6 @@
              * @author Luis Mateo Rivera Uriarte
              * @since 29/11/2019
              */
-            session_start();
-            if(!isset($_SESSION['usuarioDAW215AppLoginLogoff'])){
-                header("Location: login.php");
-            }
             foreach ($GLOBALS as $todo => $variable) {
                 if (is_array($variable)) {
                     if ($variable != $GLOBALS) {
@@ -44,6 +54,9 @@
             }
             phpinfo();
         ?>
+        <div class="volver">
+            <a href="programa.php"><img src="../webroot/images/inicio.png" alt="Enlace al índice" title="Volver" class="icono"></a>
+        </div>
         <footer>
             <p>
                 <a href="../../../..">
