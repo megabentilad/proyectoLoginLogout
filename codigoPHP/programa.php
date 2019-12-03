@@ -26,13 +26,13 @@
             session_start();
             if(isset($_GET['romper'])){
                 session_destroy();
-                header("Location: programa.php");
+                header("Refresh:0");
             }
             if(!isset($_SESSION['usuarioDAW215AppLoginLogoff'])){
                 header("Location: login.php");
             }
         ?>
-        <h3>Bienvenid@ <?php echo ucfirst($_SESSION['user']); ?>.</h3>
+        <h3>Bienvenid@ <?php echo ucfirst($_SESSION['usuarioDAW215AppLoginLogoff']); ?>.</h3>
         <br/>
         <a href="detalle.php"><button>Ir al detalle</button></a>
         <a href="programa.php?romper=true"><button>Cerrar sesión</button></a>
