@@ -8,6 +8,14 @@
         session_destroy();
         header("Location: login.php");
     }
+    //PARA EL IDIOMA
+    if(!isset($_COOKIE['idiomaDAW215'])){
+        setcookie('idiomaDAW215', espanol, time()+604800);           
+    }
+    if(isset($_GET['idioma'])){
+        setcookie('idiomaDAW215', $_GET['idioma'], time()+604800);
+        header("Location: programa.php");
+    }
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -32,14 +40,35 @@
         <?php
         /**
           @author Luis Mateo Rivera Uriate
-          @since 30/11/2019
+          @since 03/12/2019
          */
         ?>
 
         <h3>Bienvenid@ <?php echo ucfirst($_SESSION['usuarioDAW215AppLoginLogoff']); ?>.</h3>
         <br/>
+        <?php
+        switch ($_COOKIE['idiomaDAW215']){
+            case "espanol":
+                echo "<h3>Este texto está en español.</h3>";
+                break;
+            case "ingles":
+                echo "<h3>This text is in English.</h3>";
+                break;
+            case "aleman":
+                echo "<h3>Dieser Text ist in deutscher Sprache.</h3>";
+                break;
+            default:
+                echo "<h3>Este texto está en español.</h3>";
+        }
+        ?>
+        <br/>
         <a href="detalle.php"><button>Ir al detalle</button></a>
         <a href="programa.php?cerrar=true"><button>Cerrar sesión</button></a>
+        <div class="contenedorBanderas">
+            <a href="programa.php?idioma=espanol"><img src="../webroot/images/espana.png" class="bandera" title="Español" alt="Idioma español"></a>
+            <a href="programa.php?idioma=ingles"><img src="../webroot/images/inglaterra.png" class="bandera" title="English" alt="English language"></a>
+            <a href="programa.php?idioma=aleman"><img src="../webroot/images/alemania.png" class="bandera" title="Deutsch" alt="Deutsche sprache"></a>
+        </div>
         <footer>
             <p>
                 <a href="../../..">

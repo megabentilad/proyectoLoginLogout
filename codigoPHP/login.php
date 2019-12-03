@@ -50,8 +50,6 @@
                 }
             }
         }
-
-
         foreach ($aErrores as $campo => $error) { //Recorre el array en busca de mensajes de error
             if ($error != null) { //Si lo encuentra vacia el campo y cambia la condiccion
                 $entradaOK = false; //Cambia la condiccion de la variable
