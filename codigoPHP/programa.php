@@ -1,18 +1,15 @@
 <?php
-    //TODO ESTO ESTÄ AQUÍ CÓMO SUGERENCIA DE HERACLIO
+    //TODO ESTO ESTÁ AQUÍ CÓMO SUGERENCIA DE HERACLIO
     session_start();
-    if (!isset($_SESSION['usuarioDAW215AppLoginLogoff'])) {
+    if (!isset($_SESSION['usuarioDAW215AppLoginLogoff'])) { //Si no has pasado por el login, te redirige para allá
         header("Location: login.php");
     }
-    if(isset($_GET['cerrar'])){
+    if(isset($_GET['cerrar'])){  //Observa si se ha pusado el botón de cerrar sesión y hace sus cosas
         session_destroy();
         header("Location: login.php");
     }
     //PARA EL IDIOMA
-    if(!isset($_COOKIE['idiomaDAW215'])){
-        setcookie('idiomaDAW215', espanol, time()+604800);          //Dura una semana 
-    }
-    if(isset($_GET['idioma'])){
+    if(isset($_GET['idioma'])){   //Si se ha pulsado una bandera, actualiza la cookie
         setcookie('idiomaDAW215', $_GET['idioma'], time()+604800); //Dura una semana 
         
     }
@@ -47,6 +44,7 @@
         <h3>Bienvenid@ <?php echo ucfirst($_SESSION['usuarioDAW215AppLoginLogoff']); ?>.</h3>
         <br/>
         <?php
+        //Cambia el texto según la cookie del idioma
         switch ($_COOKIE['idiomaDAW215']){
             case "espanol":
                 echo "<h3>Este texto está en español.</h3>";

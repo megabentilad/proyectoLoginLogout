@@ -1,7 +1,7 @@
 <?php
     //TODO ESTO ESTÄ AQUÍ CÓMO SUGERENCIA DE HERACLIO
     session_start();
-    if (!isset($_SESSION['usuarioDAW215AppLoginLogoff'])) {
+    if (!isset($_SESSION['usuarioDAW215AppLoginLogoff'])) { //Si no has pasado por el login, te redirige para allá
         header("Location: login.php");
     }
 ?>

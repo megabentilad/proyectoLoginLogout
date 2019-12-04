@@ -5,16 +5,15 @@
         setcookie('idiomaDAW215', espanol, time()+604800);     //Coockie de idioma. Dura una semana
     }
     
-    if (isset($_SESSION['usuarioDAW215AppLoginLogoff'])) {
+    if (isset($_SESSION['usuarioDAW215AppLoginLogoff'])) {  //Si el usuario está definido, entras al programa
         header("Location: programa.php");
         exit;
     }
     require '../core/validacionFormularios.php'; //Importamos la libreria de validacion
     include '../config/conexionBDClase.php'; //Importo los datos de conexión
-    $fallos = 0; //Contador de fallos al poner la contraseña
     try {
         $miBD = new PDO(CONEXION, USUARIO, PASSWORD);
-        $miBD->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $miBD->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); //Conexion con la base de datos
     } catch (PDOException $excepcion) {
         die("<h1>Se ha producido un error, disculpe las molestias</h1>");
     }
@@ -28,29 +27,20 @@
         //La posición del array de errores recibe el mensaje de error si hubiera
         $aErrores['name'] = validacionFormularios::comprobarAlfaNumerico($_POST['name'], 25, 1, 1);  //maximo, mínimo y opcionalidad
         $aErrores['pass'] = validacionFormularios::comprobarAlfaNumerico($_POST['pass'], 25, 4, 1); //maximo, mínimo y opcionalidad
-        //Autenticación
-        if (true) {
 
-        }
+        //Autenticación con la base de datos
         if (isset($_POST['name']) && isset($_POST['pass'])) {
             if ($_POST['pass'] !== "") {
-
-
                 $codUsuario = $_POST['name'];
                 $password = $_POST['pass'];
                 $sql = "SELECT * FROM Usuario WHERE CodUsuario LIKE '$codUsuario'";
                 $resultado = $miBD->query($sql);
                 if ($resultado->rowCount() === 0) {
                     $aErrores['name'] = "El usuario no existe.";
-                    $fallos = 0;
                 } else {
                     $datos = $resultado->fetchObject();
                     if ($datos->Password !== hash('sha256', $codUsuario . $password)) {
                         $aErrores['pass'] = "La contraseña es incorrecta.";
-                        $fallos++;
-                        if ($fallos >= 3) {
-                            $aErrores['pass'] += " Ha superado el límite de intentos";
-                        }
                     }
                 }
             }
@@ -64,6 +54,7 @@
         $entradaOK = false; //Cambiamos el valor de la variable porque no se ha pulsado el botón
     }
     if ($entradaOK) {
+        //Guardamos los datos en $_SESSION
         $_SESSION['usuarioDAW215AppLoginLogoff'] = $datos->CodUsuario;
         $_SESSION['descripcionDAW215AppLoginLogoff'] = $datos->DescUsuario;
         $_SESSION['ultimaConexionDAW215AppLoginLogoff'] = $datos->FechaHoraUltimaConexion;
