@@ -1,6 +1,10 @@
 <?php
     //TODO ESTO ESTÄ AQUÍ CÓMO SUGERENCIA DE HERACLIO
     session_start();
+    if(!isset($_COOKIE['idiomaDAW215'])){
+        setcookie('idiomaDAW215', espanol, time()+604800);     //Coockie de idioma. Dura una semana
+    }
+    
     if (isset($_SESSION['usuarioDAW215AppLoginLogoff'])) {
         header("Location: programa.php");
         exit;
@@ -40,7 +44,8 @@
                     $aErrores['name'] = "El usuario no existe.";
                     $fallos = 0;
                 } else {
-                    if ($resultado->fetchObject()->Password !== hash('sha256', $codUsuario . $password)) {
+                    $datos = $resultado->fetchObject();
+                    if ($datos->Password !== hash('sha256', $codUsuario . $password)) {
                         $aErrores['pass'] = "La contraseña es incorrecta.";
                         $fallos++;
                         if ($fallos >= 3) {
@@ -59,7 +64,18 @@
         $entradaOK = false; //Cambiamos el valor de la variable porque no se ha pulsado el botón
     }
     if ($entradaOK) {
-        $_SESSION['usuarioDAW215AppLoginLogoff'] = $_POST['name'];
+        $_SESSION['usuarioDAW215AppLoginLogoff'] = $datos->CodUsuario;
+        $_SESSION['descripcionDAW215AppLoginLogoff'] = $datos->DescUsuario;
+        $_SESSION['ultimaConexionDAW215AppLoginLogoff'] = $datos->FechaHoraUltimaConexion;
+        $_SESSION['numConexionDAW215AppLoginLogoff'] = $datos->NumConexiones+1;
+        //Actualizar fecha de la última conexion
+        $sqlActualizarFecha = "UPDATE Usuario SET FechaHoraUltimaConexion = " . time() . " WHERE CodUsuario = :codigo;";
+        $ActFecha = $miBD->prepare($sqlActualizarFecha);
+        $ActFecha->execute(array(':codigo' => $datos->CodUsuario));
+        //Actualizar Número de conexiones
+        $sqlActualizarNumConexiones = "UPDATE Usuario SET NumConexiones = NumConexiones + 1 WHERE CodUsuario = :codigo;";
+        $ActConexiones = $miBD->prepare($sqlActualizarNumConexiones);
+        $ActConexiones->execute(array(':codigo' => $datos->CodUsuario));
         header("Location: programa.php");
     } else {
 ?>

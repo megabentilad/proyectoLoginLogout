@@ -6,6 +6,6 @@
 --Está copiado muy fuertemente
 
 -- Borrar base de datos con drop--
-DROP DATABASE DAW208DBProyectoTema5;
+DROP DATABASE DAW215DBProyectoTema5;
 -- Borrar usuario asociado a esa base de datos
-DROP USER usuarioDAW208DBProyectoTema5;
+DROP USER usuarioDAW215DBProyectoTema5;

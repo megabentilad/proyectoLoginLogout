@@ -10,11 +10,11 @@
     }
     //PARA EL IDIOMA
     if(!isset($_COOKIE['idiomaDAW215'])){
-        setcookie('idiomaDAW215', espanol, time()+604800);           
+        setcookie('idiomaDAW215', espanol, time()+604800);          //Dura una semana 
     }
     if(isset($_GET['idioma'])){
-        setcookie('idiomaDAW215', $_GET['idioma'], time()+604800);
-        header("Location: programa.php");
+        setcookie('idiomaDAW215', $_GET['idioma'], time()+604800); //Dura una semana 
+        
     }
 ?>
 <!DOCTYPE html>
@@ -61,6 +61,17 @@
                 echo "<h3>Este texto está en español.</h3>";
         }
         ?>
+        <br/>
+        <p>Descripción del usuario: <?php echo $_SESSION['descripcionDAW215AppLoginLogoff']; ?></p>
+        <?php
+            if($_SESSION['ultimaConexionDAW215AppLoginLogoff'] === null){
+                echo "<p>Es la primera vez que te conectas UuU</p>";
+            }else{
+        ?>
+        <p>Fecha de la última conexión: <?php echo date('d/m/Y',$_SESSION['ultimaConexionDAW215AppLoginLogoff']); ?></p>
+        <p>Hora de la última conexión: <?php echo date('H:i:s',$_SESSION['ultimaConexionDAW215AppLoginLogoff']); ?></p>
+            <?php } ?>
+        <p>Número de conexiones: <?php echo $_SESSION['numConexionDAW215AppLoginLogoff']; ?></p>
         <br/>
         <a href="detalle.php"><button>Ir al detalle</button></a>
         <a href="programa.php?cerrar=true"><button>Cerrar sesión</button></a>

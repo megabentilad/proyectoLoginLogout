@@ -25,6 +25,7 @@
         Password varchar(64) NOT null,
         Perfil enum('administrador', 'usuario') default 'usuario', -- Valor por defecto usuario
         FechaHoraUltimaConexion int,
+        NumConexiones int default 0,
         ImagenUsuario mediumblob
     );
 -- Crear del usuario --

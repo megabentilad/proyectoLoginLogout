@@ -18,6 +18,7 @@ INSERT INTO Departamento(CodDepartamento,DescDepartamento,FechaCreacionDepartame
 -- 1574772123 -> 26-nov-2019 ~13:45 --
 -- El tipo de usuario es "usuario" como predeterminado, despues añado un admin --
 INSERT INTO Usuario(CodUsuario, DescUsuario, Password) VALUES
+    ('nacho','El ignacio ese',SHA2('nachopaso',256)),
     ('daniel','daniel',SHA2('danielpaso',256)),
     ('nereaA','nereaA',SHA2('nereaApaso',256)),
     ('miguel','miguel',SHA2('miguelpaso',256)),
