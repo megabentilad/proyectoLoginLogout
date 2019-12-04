@@ -4,6 +4,10 @@
     if (!isset($_SESSION['usuarioDAW215AppLoginLogoff'])) { //Si no has pasado por el login, te redirige para allá
         header("Location: login.php");
     }
+    if(!isset($_COOKIE['idiomaDAW215'])){  //Por si acaso la cookie expira durante la conexión
+        setcookie('idiomaDAW215', espanol, time()+604800);     //Coockie de idioma. Dura una semana
+        header("Location: programa.php");
+    }
     if(isset($_GET['cerrar'])){  //Observa si se ha pusado el botón de cerrar sesión y hace sus cosas
         session_destroy();
         header("Location: login.php");
