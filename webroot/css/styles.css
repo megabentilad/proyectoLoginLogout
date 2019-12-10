@@ -63,8 +63,9 @@ form{
 .iconoFooter{
     width: 30px;
     opacity: 0.8;    
-    position: relative;
-    left: 50vh;
+    position: fixed;
+    left: 90vw;
+    top: 96vh;
 }
 .iconoFooter:hover{
     opacity: 1;

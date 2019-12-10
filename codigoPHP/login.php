@@ -2,7 +2,7 @@
     //TODO ESTO ESTÄ AQUÍ CÓMO SUGERENCIA DE HERACLIO
     session_start();
     if(!isset($_COOKIE['idiomaDAW215'])){
-        setcookie('idiomaDAW215', espanol, time()+604800);     //Coockie de idioma. Dura una semana
+        setcookie('idiomaDAW215', 'espanol', time()+604800);     //Coockie de idioma. Dura una semana
     }
     
     if (isset($_SESSION['usuarioDAW215AppLoginLogoff'])) {  //Si el usuario está definido, entras al programa

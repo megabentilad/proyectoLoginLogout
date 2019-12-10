@@ -5,7 +5,7 @@
         header("Location: login.php");
     }
     if(!isset($_COOKIE['idiomaDAW215'])){  //Por si acaso la cookie expira durante la conexión
-        setcookie('idiomaDAW215', espanol, time()+604800);     //Coockie de idioma. Dura una semana
+        setcookie('idiomaDAW215', 'espanol', time()+604800);     //Coockie de idioma. Dura una semana
         header("Location: programa.php");
     }
     if(isset($_GET['cerrar'])){  //Observa si se ha pusado el botón de cerrar sesión y hace sus cosas
@@ -14,7 +14,8 @@
     }
     //PARA EL IDIOMA
     if(isset($_GET['idioma'])){   //Si se ha pulsado una bandera, actualiza la cookie
-        setcookie('idiomaDAW215', $_GET['idioma'], time()+604800); //Dura una semana 
+        setcookie('idiomaDAW215', $_GET['idioma'], time()+604800); //Dura una semana
+        header("Location: programa.php");
         
     }
 ?>
