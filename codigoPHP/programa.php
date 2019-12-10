@@ -35,8 +35,11 @@
         <header>
             <div>
                 <h1>
+                    Proyecto LogIn LogOff
+                </h1>     
+                <h2>
                     Cuerpo del programa
-                </h1>
+                </h2>
             </div>
         </header>
         <?php
@@ -88,7 +91,7 @@
                 <a href="../../..">
                     © Luis Mateo Rivera Uriarte 2019-2020
                 </a>
-                <a href="http://daw-usgit.sauces.local/luism/proyectoLoginlogoff/tree/master" target="_blank">
+                <a href="http://daw-usgit.sauces.local/luism/proyectoLoginlogoff/tree/developer" target="_blank">
                     <img src="../webroot/images/gitLab.png" class="iconoFooter"  title="GitLab">
                 </a>
             </p>

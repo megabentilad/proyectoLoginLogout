@@ -1,14 +1,5 @@
 <?php
-    //TODO ESTO ESTÄ AQUÍ CÓMO SUGERENCIA DE HERACLIO
     session_start();
-    if(!isset($_COOKIE['idiomaDAW215'])){
-        setcookie('idiomaDAW215', 'espanol', time()+604800);     //Coockie de idioma. Dura una semana
-    }
-    
-    if (isset($_SESSION['usuarioDAW215AppLoginLogoff'])) {  //Si el usuario está definido, entras al programa
-        header("Location: programa.php");
-        exit;
-    }
     require '../core/validacionFormularios.php'; //Importamos la libreria de validacion
     include '../config/conexionBDClase.php'; //Importo los datos de conexión
     try {
@@ -21,28 +12,29 @@
     //Inicializamos un array que se encargara de recoger los errores(Campos vacios)
     $aErrores = [
         'name' => null,
-        'pass' => null
+        'desc' => null,
+        'pass' => null,
+        'pass2' => null
     ];
     if (isset($_POST['enviar'])) { //Si se ha pulsado enviar
         //La posición del array de errores recibe el mensaje de error si hubiera
         $aErrores['name'] = validacionFormularios::comprobarAlfaNumerico($_POST['name'], 25, 1, 1);  //maximo, mínimo y opcionalidad
+        $aErrores['desc'] = validacionFormularios::comprobarAlfaNumerico($_POST['desc'], 25, 1, 1); //maximo, mínimo y opcionalidad
         $aErrores['pass'] = validacionFormularios::comprobarAlfaNumerico($_POST['pass'], 25, 4, 1); //maximo, mínimo y opcionalidad
+        $aErrores['pass2'] = validacionFormularios::comprobarAlfaNumerico($_POST['pass2'], 25, 4, 1); //maximo, mínimo y opcionalidad
 
         //Autenticación con la base de datos
-        if (isset($_POST['name']) && isset($_POST['pass'])) {
-            if ($_POST['pass'] !== "") {
+        if (isset($_POST['name']) && isset($_POST['pass']) && isset($_POST['pass2'])) {
+            if ($_POST['pass'] === $_POST['pass2']) {
                 $codUsuario = $_POST['name'];
                 $password = $_POST['pass'];
                 $sql = "SELECT * FROM Usuario WHERE CodUsuario LIKE '$codUsuario'";
                 $resultado = $miBD->query($sql);
-                if ($resultado->rowCount() === 0) {
-                    $aErrores['name'] = "El usuario no existe.";
-                } else {
-                    $datos = $resultado->fetchObject();
-                    if ($datos->Password !== hash('sha256', $codUsuario . $password)) {
-                        $aErrores['pass'] = "La contraseña es incorrecta.";
-                    }
+                if ($resultado->rowCount() === 1) {
+                    $aErrores['name'] = "El usuario ya existe en la aplicación.";
                 }
+            }else{
+                $aErrores['pass2'] = "Las contraseñas no son iguales.";
             }
         }
         foreach ($aErrores as $campo => $error) { //Recorre el array en busca de mensajes de error
@@ -54,19 +46,23 @@
         $entradaOK = false; //Cambiamos el valor de la variable porque no se ha pulsado el botón
     }
     if ($entradaOK) {
+        //Creamos el usuario
+        $sqlRegistrar = "INSERT INTO Usuario(CodUsuario, DescUsuario, Password) VALUES (:codigo, :desc, SHA2(:pass,256));";
+        $registro = $miBD->prepare($sqlRegistrar);
+        $registro->execute(array(':codigo' => $_POST['name'], ':desc' => $_POST['desc'], ':pass' => $_POST['name'] . $_POST['pass']));
         //Guardamos los datos en $_SESSION
-        $_SESSION['usuarioDAW215AppLoginLogoff'] = $datos->CodUsuario;
-        $_SESSION['descripcionDAW215AppLoginLogoff'] = $datos->DescUsuario;
-        $_SESSION['ultimaConexionDAW215AppLoginLogoff'] = $datos->FechaHoraUltimaConexion;
-        $_SESSION['numConexionDAW215AppLoginLogoff'] = $datos->NumConexiones+1;
+        $_SESSION['usuarioDAW215AppLoginLogoff'] = $_POST['name'];
+        $_SESSION['descripcionDAW215AppLoginLogoff'] = $_POST['desc'];
+        $_SESSION['ultimaConexionDAW215AppLoginLogoff'] = null;
+        $_SESSION['numConexionDAW215AppLoginLogoff'] = 1;
         //Actualizar fecha de la última conexion
         $sqlActualizarFecha = "UPDATE Usuario SET FechaHoraUltimaConexion = " . time() . " WHERE CodUsuario = :codigo;";
         $ActFecha = $miBD->prepare($sqlActualizarFecha);
-        $ActFecha->execute(array(':codigo' => $datos->CodUsuario));
+        $ActFecha->execute(array(':codigo' => $_POST['name']));
         //Actualizar Número de conexiones
         $sqlActualizarNumConexiones = "UPDATE Usuario SET NumConexiones = NumConexiones + 1 WHERE CodUsuario = :codigo;";
         $ActConexiones = $miBD->prepare($sqlActualizarNumConexiones);
-        $ActConexiones->execute(array(':codigo' => $datos->CodUsuario));
+        $ActConexiones->execute(array(':codigo' => $_POST['name']));
         header("Location: programa.php");
     } else {
 ?>
@@ -88,7 +84,7 @@
             input{
                 font-size: 20px;
             }
-            #name, #pass{
+            #name, #pass, #pass2, #desc{
                 width: 130px;
                 height: 40px;
                 border-radius: 10px;
@@ -107,10 +103,16 @@
                 position: absolute;
             }
             #ename{
-                top: 110px;
+                top: 160px;
+            }
+            #edesc{
+                top: 230px;
             }
             #epass{
-                top: 180px;
+                top: 295px;
+            }
+            #epass2{
+                top: 360px;
             }
             .volver{
                 position: absolute;
@@ -128,14 +130,14 @@
                     Proyecto LogIn LogOff
                 </h1>     
                 <h2>
-                    Inicio de sesión
+                    Registro de usuario
                 </h2>
             </div>
         </header>
         <?php
         /**
           @author Luis Mateo Rivera Uriate
-          @since 30/11/2019
+          @since 10/12/2019
          */
         
             ?>
@@ -143,20 +145,28 @@
             <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
                 <fieldset>
                     <div class="obligatorio">
-                        <label for="name">Nombre de usuario: </label>
-                        <input type="text" id="name" name="name" placeholder="Usuario" width="10" height="20" value="<?php if($aErrores['name'] == NULL && isset($_POST['name'])){ echo $_POST['name'];} ?>"><br>
-                              
+                        <label for="name">Nombre del usuario: </label>
+                        <input type="text" id="name" name="name" placeholder="Usuario" width="10" height="20" value="<?php if($aErrores['name'] == NULL && isset($_POST['name'])){ echo $_POST['name'];} ?>"><br>   
+                    </div>
+                    <br/>
+                    <div class="obligatorio">
+                        <label for="desc">Descripción del usuario: </label>
+                        <input type="text" id="desc" name="desc" placeholder="Descripción" width="10" height="20" value="<?php if($aErrores['desc'] == NULL && isset($_POST['desc'])){ echo $_POST['desc'];} ?>"><br>   
                     </div>
                     <br/>
                     <div class="obligatorio">
                         <label for="pass">Contraseña: </label> 
-                        <input type="password" id="pass" name="pass" placeholder="Contraseña" value="<?php if($aErrores['pass'] == NULL && isset($_POST['pass'])){ echo $_POST['pass'];} ?>"><br>
-                               
+                        <input type="password" id="pass" name="pass" placeholder="Contraseña" value="<?php if($aErrores['pass'] == NULL && isset($_POST['pass'])){ echo $_POST['pass'];} ?>"><br>      
+                    </div>
+                    <br/>
+                    <div class="obligatorio">
+                        <label for="pass2">Repita la contraseña: </label> 
+                        <input type="password" id="pass2" name="pass2" placeholder="Contraseña"><br>        
                     </div>
                     <br/>
                     <div>
                         <input type="submit" name="enviar" value="Iniciar sesión">
-                        <a href="registro.php"><input type="button" name="registro" value="Registrarse"></a>
+                        <a href="login.php"><input type="button" name="volver" value="Cancelar"></a>
                     </div>
                 </fieldset>
             </form>
@@ -166,15 +176,21 @@
                     <?php echo $aErrores['name']; //Mensaje de error que tiene el array aErrores   ?>
                 </div>   
             <?php }   
+            if ($aErrores['desc'] != NULL) { ?>
+                <div class="error" id="edesc">
+                    <?php echo $aErrores['desc']; //Mensaje de error que tiene el array aErrores   ?>
+                </div>   
+            <?php }   
             if ($aErrores['pass'] != NULL) { ?>
                 <div class="error" id="epass">
                     <?php echo $aErrores['pass']; //Mensaje de error que tiene el array aErrores   ?>
+                </div> 
+            <?php }
+            if ($aErrores['pass2'] != NULL) { ?>
+                <div class="error" id="epass2">
+                    <?php echo $aErrores['pass2']; //Mensaje de error que tiene el array aErrores   ?>
                 </div>   
             <?php } ?>    
-        <div class="volver">
-            <a href="../../proyectoTema5/indexProyectoTema5.html"><img src="../webroot/images/inicio.png" alt="Enlace al índice" title="Volver" class="icono"></a>
-        </div>
-
         <footer>
             <p>
                 <a href="../../..">
