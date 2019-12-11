@@ -80,6 +80,7 @@
         <p>Número de conexiones: <?php echo $_SESSION['numConexionDAW215AppLoginLogoff']; ?></p>
         <br/>
         <a href="detalle.php"><button>Ir al detalle</button></a>
+        <a href="editarPerfil.php"><button>Editar perfil</button></a>
         <a href="programa.php?cerrar=true"><button>Cerrar sesión</button></a>
         <div class="contenedorBanderas">
             <a href="programa.php?idioma=espanol"><img src="../webroot/images/espana.png" class="bandera" title="Español" alt="Idioma español"></a>

@@ -1,5 +1,8 @@
 <?php
     session_start();
+    if (!isset($_SESSION['usuarioDAW215AppLoginLogoff'])) { //Si no has pasado por el login, te redirige para allá
+        header("Location: login.php");
+    }
     require '../core/validacionFormularios.php'; //Importamos la libreria de validacion
     include '../config/conexionBDClase.php'; //Importo los datos de conexión
     try {
@@ -11,27 +14,24 @@
     $entradaOK = true; //Inicializamos una variable que nos ayudara a controlar si todo esta correcto    
     //Inicializamos un array que se encargara de recoger los errores(Campos vacios)
     $aErrores = [
-        'name' => null,
         'desc' => null,
         'pass' => null,
         'pass2' => null
     ];
     if (isset($_POST['enviar'])) { //Si se ha pulsado enviar
         //La posición del array de errores recibe el mensaje de error si hubiera
-        $aErrores['name'] = validacionFormularios::comprobarAlfaNumerico($_POST['name'], 15, 1, 1);  //maximo, mínimo y opcionalidad
-        $aErrores['desc'] = validacionFormularios::comprobarAlfaNumerico($_POST['desc'], 255, 1, 1); //maximo, mínimo y opcionalidad
-        $aErrores['pass'] = validacionFormularios::comprobarAlfaNumerico($_POST['pass'], 64, 4, 1); //maximo, mínimo y opcionalidad
-        $aErrores['pass2'] = validacionFormularios::comprobarAlfaNumerico($_POST['pass2'], 64, 4, 1); //maximo, mínimo y opcionalidad
+        $aErrores['desc'] = validacionFormularios::comprobarAlfaNumerico($_POST['desc'], 25, 1, 1); //maximo, mínimo y opcionalidad
+        $aErrores['pass'] = validacionFormularios::comprobarAlfaNumerico($_POST['pass'], 25, 4, 1); //maximo, mínimo y opcionalidad
+        $aErrores['pass2'] = validacionFormularios::comprobarAlfaNumerico($_POST['pass2'], 25, 4, 1); //maximo, mínimo y opcionalidad
 
         //Autenticación con la base de datos
-        if (isset($_POST['name']) && isset($_POST['pass']) && isset($_POST['pass2'])) {
+        if (isset($_POST['desc']) && isset($_POST['pass']) && isset($_POST['pass2'])) {
             if ($_POST['pass'] === $_POST['pass2']) {
-                $codUsuario = $_POST['name'];
                 $password = $_POST['pass'];
-                $sql = "SELECT * FROM Usuario WHERE CodUsuario LIKE '$codUsuario'";
+                $sql = "SELECT * FROM Usuario WHERE CodUsuario LIKE '" . $_SESSION['usuarioDAW215AppLoginLogoff'] . "';";
                 $resultado = $miBD->query($sql);
-                if ($resultado->rowCount() === 1) {
-                    $aErrores['name'] = "El usuario ya existe en la aplicación.";
+                if(hash('sha256', $_SESSION['usuarioDAW215AppLoginLogoff'] . $password) !== $resultado->Password){
+                    $aErrores['pass'] = "La nueva contraseña es igual a la antigua.";
                 }
             }else{
                 $aErrores['pass2'] = "Las contraseñas no son iguales.";
@@ -46,15 +46,12 @@
         $entradaOK = false; //Cambiamos el valor de la variable porque no se ha pulsado el botón
     }
     if ($entradaOK) {
-        //Creamos el usuario
-        $sqlRegistrar = "INSERT INTO Usuario(CodUsuario, DescUsuario, Password) VALUES (:codigo, :desc, SHA2(:pass,256));";
+        //Editamos el usuario
+        $sqlRegistrar = "UPDATE Usuario SET DescDepartamento = :descripcion, VolumenNegocio = :volumen WHERE CodDepartamento = :codig;";             //SEGUIR POR AQUÍ
         $registro = $miBD->prepare($sqlRegistrar);
         $registro->execute(array(':codigo' => $_POST['name'], ':desc' => $_POST['desc'], ':pass' => $_POST['name'] . $_POST['pass']));
         //Guardamos los datos en $_SESSION
-        $_SESSION['usuarioDAW215AppLoginLogoff'] = $_POST['name'];
         $_SESSION['descripcionDAW215AppLoginLogoff'] = $_POST['desc'];
-        $_SESSION['ultimaConexionDAW215AppLoginLogoff'] = null;
-        $_SESSION['numConexionDAW215AppLoginLogoff'] = 1;
         //Actualizar fecha de la última conexion
         $sqlActualizarFecha = "UPDATE Usuario SET FechaHoraUltimaConexion = " . time() . " WHERE CodUsuario = :codigo;";
         $ActFecha = $miBD->prepare($sqlActualizarFecha);
