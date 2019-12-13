@@ -49,7 +49,7 @@
          */
         ?>
 
-        <h3>Bienvenid@ <?php echo ucfirst($_SESSION['usuarioDAW215AppLoginLogoff']); ?>.</h3>
+        <h3>Bienvenid@ <?php echo ucfirst($_SESSION['descripcionDAW215AppLoginLogoff']); ?>.</h3>
         <br/>
         <?php
         //Cambia el texto según la cookie del idioma
@@ -74,12 +74,13 @@
                 echo "<p>Es la primera vez que te conectas UuU</p>";
             }else{
         ?>
-        <p>Fecha de la última conexión: <?php echo date('d/m/Y',$_SESSION['ultimaConexionDAW215AppLoginLogoff']); ?></p>
-        <p>Hora de la última conexión: <?php echo date('H:i:s',$_SESSION['ultimaConexionDAW215AppLoginLogoff']); ?></p>
+        <p>Fecha de la conexión anterior: <?php echo date('d/m/Y',$_SESSION['ultimaConexionDAW215AppLoginLogoff']); ?></p>
+        <p>Hora de la conexión anterior: <?php echo date('H:i:s',$_SESSION['ultimaConexionDAW215AppLoginLogoff']); ?></p>
             <?php } ?>
         <p>Número de conexiones: <?php echo $_SESSION['numConexionDAW215AppLoginLogoff']; ?></p>
         <br/>
         <a href="detalle.php"><button>Ir al detalle</button></a>
+        <a href="editarPerfil.php"><button>Editar perfil</button></a>
         <a href="programa.php?cerrar=true"><button>Cerrar sesión</button></a>
         <div class="contenedorBanderas">
             <a href="programa.php?idioma=espanol"><img src="../webroot/images/espana.png" class="bandera" title="Español" alt="Idioma español"></a>
