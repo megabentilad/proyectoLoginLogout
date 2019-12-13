@@ -1,12 +1,7 @@
 <?php
-    //TODO ESTO ESTÄ AQUÍ CÓMO SUGERENCIA DE HERACLIO
     session_start();
-    if (isset($_SESSION['usuarioDAW215AppLoginLogoff'])) {  //Si el usuario está definido, entras al programa
-        header("Location: programa.php");
-        exit;
-    }
-    if(!isset($_COOKIE['idiomaDAW215'])){
-        setcookie('idiomaDAW215', 'espanol', time()+604800);     //Coockie de idioma. Dura una semana
+    if (!isset($_SESSION['usuarioDAW215AppLoginLogoff'])) { //Si no has pasado por el login, te redirige para allá
+        header("Location: login.php");
     }
     require '../core/validacionFormularios.php'; //Importamos la libreria de validacion
     include '../config/conexionBDClase.php'; //Importo los datos de conexión
@@ -19,29 +14,30 @@
     $entradaOK = true; //Inicializamos una variable que nos ayudara a controlar si todo esta correcto    
     //Inicializamos un array que se encargara de recoger los errores(Campos vacios)
     $aErrores = [
-        'name' => null,
-        'pass' => null
+        'desc' => null,
+        'pass' => null,
+        'pass2' => null
     ];
     if (isset($_POST['enviar'])) { //Si se ha pulsado enviar
         //La posición del array de errores recibe el mensaje de error si hubiera
-        $aErrores['name'] = validacionFormularios::comprobarAlfaNumerico($_POST['name'], 25, 1, 1);  //maximo, mínimo y opcionalidad
-        $aErrores['pass'] = validacionFormularios::comprobarAlfaNumerico($_POST['pass'], 25, 4, 1); //maximo, mínimo y opcionalidad
+        $aErrores['pass'] = validacionFormularios::comprobarAlfaNumerico($_POST['pass'], 64, 4, 1); //maximo, mínimo y opcionalidad
+        $aErrores['pass2'] = validacionFormularios::comprobarAlfaNumerico($_POST['pass2'], 64, 4, 1); //maximo, mínimo y opcionalidad
 
         //Autenticación con la base de datos
-        if (isset($_POST['name']) && isset($_POST['pass'])) {
-            if ($_POST['pass'] !== "") {
-                $codUsuario = $_POST['name'];
+        if(true){
+            
+        }
+        if (isset($_POST['pass']) && isset($_POST['pass2'])) {
+            if ($_POST['pass'] === $_POST['pass2']) {
                 $password = $_POST['pass'];
-                $sql = "SELECT * FROM Usuario WHERE CodUsuario LIKE '$codUsuario'";
+                $sql = "SELECT Password FROM Usuario WHERE CodUsuario = '" . $_SESSION['usuarioDAW215AppLoginLogoff'] . "';";
                 $resultado = $miBD->query($sql);
-                if ($resultado->rowCount() === 0) {
-                    $aErrores['name'] = "El usuario no existe.";
-                } else {
-                    $datos = $resultado->fetchObject();
-                    if ($datos->Password !== hash('sha256', $codUsuario . $password)) {
-                        $aErrores['pass'] = "La contraseña es incorrecta.";
-                    }
+                $passUser = $resultado->fetchObject();
+                if(hash('sha256', $_SESSION['usuarioDAW215AppLoginLogoff'] . $password) === $passUser->Password){
+                    $aErrores['pass'] = "La nueva contraseña es igual a la antigua.";
                 }
+            }else{
+                $aErrores['pass2'] = "Las contraseñas no son iguales.";
             }
         }
         foreach ($aErrores as $campo => $error) { //Recorre el array en busca de mensajes de error
@@ -53,19 +49,11 @@
         $entradaOK = false; //Cambiamos el valor de la variable porque no se ha pulsado el botón
     }
     if ($entradaOK) {
-        //Guardamos los datos en $_SESSION
-        $_SESSION['usuarioDAW215AppLoginLogoff'] = $datos->CodUsuario;
-        $_SESSION['descripcionDAW215AppLoginLogoff'] = $datos->DescUsuario;
-        $_SESSION['ultimaConexionDAW215AppLoginLogoff'] = $datos->FechaHoraUltimaConexion;
-        $_SESSION['numConexionDAW215AppLoginLogoff'] = $datos->NumConexiones+1;
-        //Actualizar fecha de la última conexion
-        $sqlActualizarFecha = "UPDATE Usuario SET FechaHoraUltimaConexion = " . time() . " WHERE CodUsuario = :codigo;";
-        $ActFecha = $miBD->prepare($sqlActualizarFecha);
-        $ActFecha->execute(array(':codigo' => $datos->CodUsuario));
-        //Actualizar Número de conexiones
-        $sqlActualizarNumConexiones = "UPDATE Usuario SET NumConexiones = NumConexiones + 1 WHERE CodUsuario = :codigo;";
-        $ActConexiones = $miBD->prepare($sqlActualizarNumConexiones);
-        $ActConexiones->execute(array(':codigo' => $datos->CodUsuario));
+        //Editamos el usuario
+        $sqlRegistrar = "UPDATE Usuario SET Password = SHA2(:pass,256) WHERE CodUsuario = :codigo;";             
+        $registro = $miBD->prepare($sqlRegistrar);
+        $registro->execute(array(':codigo' => $_SESSION['usuarioDAW215AppLoginLogoff'], ':pass' => $_SESSION['usuarioDAW215AppLoginLogoff'] . $_POST['pass']));
+        
         header("Location: programa.php");
     } else {
 ?>
@@ -87,7 +75,7 @@
             input{
                 font-size: 20px;
             }
-            #name, #pass{
+            input[type="password"]{
                 width: 130px;
                 height: 40px;
                 border-radius: 10px;
@@ -105,11 +93,11 @@
                 display: inline-block;
                 position: absolute;
             }
-            #ename{
-                top: 110px;
-            }
             #epass{
-                top: 180px;
+                top: 165px;
+            }
+            #epass2{
+                top: 230px;
             }
             .volver{
                 position: absolute;
@@ -127,14 +115,14 @@
                     Proyecto LogIn LogOff
                 </h1>     
                 <h2>
-                    Inicio de sesión
+                    Cambiar contraseña
                 </h2>
             </div>
         </header>
         <?php
         /**
           @author Luis Mateo Rivera Uriate
-          @since 30/11/2019
+          @since 11/12/2019
          */
         
             ?>
@@ -142,44 +130,38 @@
             <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
                 <fieldset>
                     <div class="obligatorio">
-                        <label for="name">Nombre de usuario: </label>
-                        <input type="text" id="name" name="name" placeholder="Usuario" width="10" height="20" value="<?php if($aErrores['name'] == NULL && isset($_POST['name'])){ echo $_POST['name'];} ?>"><br>
-                              
+                        <label for="pass">Nueva contraseña: </label> 
+                        <input type="password" id="pass" name="pass" placeholder="Contraseña" value="<?php if($aErrores['pass'] == NULL && isset($_POST['pass'])){ echo $_POST['pass'];} ?>"><br>      
                     </div>
                     <br/>
                     <div class="obligatorio">
-                        <label for="pass">Contraseña: </label> 
-                        <input type="password" id="pass" name="pass" placeholder="Contraseña" value="<?php if($aErrores['pass'] == NULL && isset($_POST['pass'])){ echo $_POST['pass'];} ?>"><br>
-                               
+                        <label for="pass2">Repita la contraseña: </label> 
+                        <input type="password" id="pass2" name="pass2" placeholder="Contraseña"><br>        
                     </div>
                     <br/>
                     <div>
-                        <input type="submit" name="enviar" value="Iniciar sesión">
-                        <a href="registro.php"><input type="button" name="registro" value="Registrarse"></a>
+                        <input type="submit" name="enviar" value="Aceptar">
+                        <a href="login.php"><input type="button" name="volver" value="Cancelar"></a>
                     </div>
                 </fieldset>
             </form>
-            <?php } ?>
-            <?php if ($aErrores['name'] != NULL) { ?>
-                <div class="error" id="ename">
-                    <?php echo $aErrores['name']; //Mensaje de error que tiene el array aErrores   ?>
-                </div>   
-            <?php }   
+            <?php } 
             if ($aErrores['pass'] != NULL) { ?>
                 <div class="error" id="epass">
                     <?php echo $aErrores['pass']; //Mensaje de error que tiene el array aErrores   ?>
+                </div> 
+            <?php }
+            if ($aErrores['pass2'] != NULL) { ?>
+                <div class="error" id="epass2">
+                    <?php echo $aErrores['pass2']; //Mensaje de error que tiene el array aErrores   ?>
                 </div>   
             <?php } ?>    
-        <div class="volver">
-            <a href="../../proyectoTema5/indexProyectoTema5.html"><img src="../webroot/images/inicio.png" alt="Enlace al índice" title="Volver" class="icono"></a>
-        </div>
-
         <footer>
             <p>
                 <a href="../../..">
                     © Luis Mateo Rivera Uriarte 2019-2020
                 </a>
-                <a href="http://daw-usgit.sauces.local/luism/proyectoLoginlogoff/tree/master" target="_blank">
+                <a href="http://daw-usgit.sauces.local/luism/proyectoLoginlogoff/tree/developer" target="_blank">
                     <img src="../webroot/images/gitLab.png" class="iconoFooter"  title="GitLab">
                 </a>
             </p>
