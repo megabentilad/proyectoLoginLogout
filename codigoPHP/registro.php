@@ -165,7 +165,7 @@
                     </div>
                     <br/>
                     <div>
-                        <input type="submit" name="enviar" value="Iniciar sesión">
+                        <input type="submit" name="enviar" value="Registrarse">
                         <a href="login.php"><input type="button" name="volver" value="Cancelar"></a>
                     </div>
                 </fieldset>
